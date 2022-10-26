@@ -1,0 +1,51 @@
+1. start.spring.io 에 접속하여 
+상황에 맞는 옵션들을 선택한다.
+maven 보다 gradle 이 최신형이고 속도가 빠르기에 gradel을 선택한다.
+
+2. 웹 응용프로그램
+spring web
+spring boot devtools
+
+3. expore 을 보면
+종속형 라이브러리에 
+spring-boot-starter repository가 있는 업데이트를 해야하는 시점에서 처음 시작하기 좋은 스타터 라이브러리다.
+
+4. 다운로드후에 intellij 로 실행하는 이유는 비쥬얼 코드에서는 java, spring boot 를 실행하기 위해서는 여러 프로그램을 설치하고 환경을 조성해야하지만 intellij 는 기본적으로 설치가 되어있기 때문이다.
+
+5. 다운받은 zip을 풀어 intellij로 오픈하게 되면 main에 설치된 코틀린실행 파일을 확인할 수 있다.
+실행을 하면 보여지는 화면이 없기 때문에 아무화면이 없다.
+
+6. com.example.firstboot 패키지에 화면에 보여질 코틀린 파일을 생성해보자.
+코틀린 파일을 new하고
+주석으로 @RestController를 입력하면 -> 스프링 부트의 기능인 auto configuration 으로 자동으로 라이브러리가 적용이된다.
+모든 파일을 클래스를 스캔하기때문에 경로를 추가하여야한다.
+
+다른 장고 프레임워크에서도 경로를 추가하여야 하지만 intellij에서는 필요가없다.
+
+7. fun hello()의 메소드를 만들고
+주석으로 @GetMapping 이라는 http 메소드를 사용하여 hello world를 반환한다.
+
+8. 그리고 다시 main application을 실행하고 localhost:8080/hello 를 접속하면 문구가 나타나는 것을 알 수 있다.
+
+9. 패키지 폴더를 우클릭하어 rebuild하게되면 수정된 부분을 다시 실행한다.
+(서버의 용량이 크면 이부분을 간단히 실행할 수 있다.)
+
+10. 요청용인 계정 컨트롤러로 변경하여본다.
+AccountsController 에 RequestMapping이라는 http 메소드를사용한다.
+rename으로 변경하면 모든게 한 번에 바뀐다.
+
+11. 그리고 rebuild후 사이트에 접속하게되면
+/hello에서는 접속이 안되고
+/accounts/hello 에서 접속이 되는 것을 알 수 있다.
+
+12. 데이터 클래스 두개를 만들고
+보여지는 값과 생성되는 값을 만들어서 get, post를 만들어보겠다.
+
+13. getmapping에서는 id1, name을
+post값은 id2와 요청된 request.name을 받아온다.
+
+14. /accounts/에 접속해보면 보이는 화면은 1, name이지만
+post값으로 보낸 값은 id2와 화면에서 받아온 request.name이다.
+
+postman에서 body -> raw(json)으로 send 값을 주었을 때 값이 변경되는 것을 알 수 있다.
+
