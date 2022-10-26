@@ -1,0 +1,58 @@
+구성 속성을 살피고,
+고유의 사용자 정의 속성을 작성한 다음 intellij 아디이어와 터미널에서 서로 다른 프로필 간에 전환하는 방법
+
+grandle runner 및 마지막으로 구성 속성에 대한 yml 구문을 조사
+
+
+1. GreetingsController.kt 파일 추가 그리고 인터넷에서 확인
+- JSON 응답을 확인할 수 있다.
+
+2. 스프링 부트에서 구성 속성 -> application.properties 에서 설정할 수 있다.
+기본 속성은 있지만
+google -> spring boot properties를 검색하여 필요한 캐싱을 가져와 추가할 수 있다.
+
+3. run Log 에서
+2022-10-26 20:32:27.161  INFO 23085 --- [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port(s): 8080 (http) with context path ''
+8080 포트를 사용하는 것을 알 수 있다.
+
+4. 포트 변경
+server.port=7070 추가 후 빌드
+server.port=${my_port}
+-> 환경변수에서 my_port 값을 지정하면 포트를 암호화할 수 있다. (흥미로움)
+
+5. api응답에서 빌드 번호를 반환하고 싶다는 결과를 예상할 때
+값을 @value값으로 가져와 문자를 \${}로 가져온다.  그 값을 res연결하여 값을 객체로 전달한다.
+run/debug configurations 구성을 편집 -> environment variables 추가
+
+
+시스템로그에
+2022-10-26 20:46:02.426  INFO 23085 --- [  restartedMain] c.e.firstboot.FirstbootApplicationKt     : No active profile set, falling back to 1 default profile: "default"
+에 기본적으로 설정되어있다.
+6. 개발용으로 새 프로필을 만들어 이 개념을 적용하면 
+resources 폴더에
+application-dev.properties를 추가한다 -> 프로필이 dev일 때만 적용됨
+
+7. 활성 프로필을 변경할 수 있는 두 가지 방법
+7-1 intellij에서 실행 중인 빌드 run/debug configurations 구성을 편집 -> program arguments 지정 -> 프로그램 인수 --spring.profiles.active=dev
+를 변경하여 적용한다.
+
+그리고 빌드를 중지 및 재시작하고 로그를 보면 
+2022-10-26 20:55:12.221  INFO 24810 --- [  restartedMain] c.e.firstboot.FirstbootApplicationKt     : The following 1 profile is active: "dev"
+dev로 api의 값을 가져올 수 있는 것을 알 수 있다.
+
+7-2. 인수 제거 후
+run/debug configurations 구성을 편집 -> environment variables 'SPRING_PROFILES_ACTIVE'추가 값은 dev2
+run log 에서 2022-10-26 21:07:13.554  INFO 25709 --- [  restartedMain] c.e.firstboot.FirstbootApplicationKt     : The following 1 profile is active: "dev2"
+을 확인 할 수 있다.
+
+그리고 grandle 인 -bash 콘솔에서 실행하게 되면 
+dev2의 값으로 들어가져서 현재 api값을 가져올 수 있다.
+
+8. yml으로 여러 프로필 관리하는 법
+두개의 properties를 모두 삭제하고 application.yml을 추가한다.
+그리고 난 후 코드 입력
+---의 문법으로 두 가지의 프로필을 나눌 수 있다.
+그리고 빌드 중지 및 재시작하고 사이트 확인
+
+
+

@@ -1,0 +1,9 @@
+vladsave:
+  firstboot:
+    buildNumber: 3.0-yml
+---
+spring:
+  profiles: dev
+vladsave:
+  firstboot:
+    buildNumber: 4.0-yml
