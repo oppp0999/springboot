@@ -1,0 +1,80 @@
+ManyToMany 다대다 관계를 다룰 수 있는 주차이다.
+
+1. starter 파일을 다운하여 만들어진 프로젝트를 사용하고
+repos.kt 에는 단순 저장소이다.
+student와 course(여러 등록) 
+
+학생과 코스에 대한 컨트롤러가 존재함
+
+2. 응용 프로그램 속성에는 이 프로젝트가 mysql 드라이버 사용 , 기본 포트를 이용한다.
+m2m 은 우리가 사용할 다대다 데이터베이스이다.
+
+3. 실행하면 마이그레이션이 있고 liquibase 데이터 베이스를 조절할 수 있다.
+학생 테이블 3개, 코스 등..
+
+4. 데이터베이스 확인 및 -> 포스트맨으로 데이터가 get되는 것을 알 수 있다.
+
+5. add the kotlin code
+다대다 관계로 학생에게 추가 코드를 작성한다.
+repos.kt에서 등록된 필드로 추가하여 목록이 되고, 기본값을 제공하기 위해서 목록을 추가한다.
+변경할 수 있는 목록 mutablelist를 사용한다.
+
+최근에 버전에는 list만 이용해도 된다 만약 오류가 난다전 위에 방식을 이용하다.
+
+6. 리스트에 many to many 주석을 사용하여 두개의 열이 있는 테이블을 이용한다.
+하나는 id 열을 조인하고 이름은 학생 id 이 테이블을 만들고 관계를 생성하여 데이터를 찾고록 한다.
+
+7. 학생에 다대다 변수와 코스에 변수를 작성하는데
+코스에서 인롤인 리스트를 만들어 표시할 수 있게 작성한다.
+
+8. 유동 기반 마이그레이션을 사용하여 데이터베이스에 이 조인트 테이블을 생성하므로 리소스 liquidbase.xml로 이동하고
+맨 아래에서 새 체인 셋을 생성하여 set id를 변경 -> 테이블 생성 -> 학생, 코스 아이디를 설정한다.
+<changeSet>
+체인셋 내부에
+외래 키 제약 조건을 추가 -> addForeignKeyConstraint
+테이블 과정 내부의 필드 id를 참조해야 하며 
+고유 제약 조건을 추가해야함 -> addUniqueConstraint
+고유 id를 위해서 항상 id를 전체 스캔을 해야하기때문에 보조 색인을 추가해야함 -> createIndex 인덱스 생성
+
+9.
+텍스트 목적으로 테이블을 추가하여 하나를 가정해본다.,
+<insert tableName="student_enrolled_in_course">
+            <column name="student_id" value="1"></column>
+            <column name="course_id" value="1"></column>
+        </insert>
+
+중복을 지워놨기에 다시 프로젝트를 재 실행해도 값은 하나만 들어온다.!
+
+10. End to end testing of the read path
+viewstudent 에 등록된 과정을 새 필드로 저장.
+Student.toView()에도 값을 추가 맵핑한다. 등록된 아이디
+같은 방식으로 코스에도 설정하면
+
+11. 리빌드하면 포스트맨에서 각 학생 아이디에서 코스를 어떻게 수행했는데 body로 알 수 있다.
+
+12. add a write api endpoint 
+로 직접 과정을 쓸 수 있게 만들 수 있는 프로젝트로 학생 컨트롤로 이동하여
+@PostMapping("{id}/enroll")
+    fun enroll(@PathVariable id : Long){
+        
+    }
+학생 컨트롤러에 추가.
+그리고 데이터 클래스를 추가하여 현재 등록 아이디를 변수로 받는다.
+
+화면에서 request로 값을 받아오는데 값이 존재하지않으면 404 를 호출
+코스 저장소에 연결하여 값 또한 받아와야한다.
+
+학생을 수정하고 새 목록으로 받아와 저장한다.
+
+@PostMapping("{id}/enroll")
+    fun enroll(@PathVariable id : Long, @RequestBody enrollIn: EnrollInCourse): ViewStudent{
+        val student = studentRepository.findById(id).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
+        val course = courseRepository.findById(enrollIn.courseId).orElseThrow {ResponseStatusException(HttpStatus.NOT_FOUND)}
+
+        return studentRepository.save(
+                student.copy(
+                    enrolledIn = student.enrolledIn.plus(course)
+                )
+        ).toView()
+
+주소로 student/{id}/enroll에 post 값으로 courseId를 전송하면 해당 학생에서 추가할 수 있다 1, 2 이 설정되어있고 3을 추가하면 없다는 오류를 내보내는 것을 확인할 수 있다.
